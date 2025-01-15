@@ -69,7 +69,7 @@ const dropboxDownload = async function (
 
   // delete temporary folders
   fs.rmSync(zipFilePath);
-  fs.rmSync(zipFolderPath, { recursive: true, force: true });
+  // fs.rmSync(zipFolderPath, { recursive: true, force: true });
 };
 
 // eslint-disable-next-line no-unused-vars
