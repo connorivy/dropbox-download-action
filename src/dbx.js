@@ -65,15 +65,30 @@ const dropboxDownload = async function (
   await extract(zipFilePath, { dir: destPath });
 
   // copy each exatracted file to destination
-  fs.readdirSync(zipFolderPath).forEach((file) => {
-    const slug = file.replace(/\s+/g, "-").toLowerCase();
-    fs.copyFileSync(`${zipFolderPath}/${file}`, `${destPath}/${slug}`);
-  });
+  copyDirectory(zipFolderPath, destPath);
 
   // delete temporary folders
   fs.rmSync(zipFilePath);
   fs.rmSync(zipFolderPath, { recursive: true, force: true });
 };
+
+const copyDirectory = function (source, destination) { 
+  if (!fs.existsSync(destination)) { 
+    fs.mkdirSync(destination, { 
+      recursive: true 
+    }); 
+  } 
+  const items = fs.readdirSync(source, { withFileTypes: true }); 
+  for (const item of items) { 
+    const sourcePath = path.join(source, item.name); 
+    const destinationPath = path.join(destination, item.name); 
+    if (item.isDirectory()) { 
+      copyDirectory(sourcePath, destinationPath); 
+    } else { 
+      fs.copyFileSync(sourcePath, destinationPath); 
+    } 
+  } 
+}
 
 module.exports = {
   dropboxDownload,
